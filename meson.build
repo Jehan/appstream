@@ -87,8 +87,9 @@ if get_option ('gir')
     dependency('gobject-introspection-1.0', version: '>=1.54')
 endif
 
-stemmer_inc_dirs = include_directories(['/usr/include'])
+stemmer_inc_dirs = include_directories([])
 if get_option('stemming')
+    stemmer_inc_dirs = include_directories(['/usr/include'])
     stemmer_lib = ccompiler.find_library('stemmer', required: true)
     if not ccompiler.has_header('libstemmer.h')
         if ccompiler.has_header('libstemmer/libstemmer.h')
