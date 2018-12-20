@@ -34,6 +34,7 @@
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
 #include <errno.h>
+#include <dirent.h>
 
 #include "as-utils.h"
 #include "as-utils-private.h"
