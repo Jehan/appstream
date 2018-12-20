@@ -44,6 +44,8 @@
 /* Compilers will optimise this to a constant */
 #define YAML_SEPARATOR_LEN strlen(YAML_SEPARATOR)
 
+#ifdef HAVE_APT_SUPPORT
+
 static const gchar *apt_lists_dir = "/var/lib/apt/lists/";
 static const gchar *appstream_yml_target = "/var/lib/app-info/yaml";
 static const gchar *appstream_icons_target = "/var/lib/app-info/icons";
@@ -409,3 +411,4 @@ as_pool_scan_apt (AsPool *pool, gboolean force, GError **error)
 	/* ensure the cache-rebuild process notices these changes */
 	as_touch_location (appstream_yml_target);
 }
+#endif

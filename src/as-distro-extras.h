@@ -27,9 +27,11 @@
 G_BEGIN_DECLS
 #pragma GCC visibility push(hidden)
 
+#ifdef HAVE_APT_SUPPORT
 void		as_pool_scan_apt (AsPool *pool,
 				  gboolean force,
 				  GError **error);
+#endif
 
 #pragma GCC visibility pop
 G_END_DECLS
