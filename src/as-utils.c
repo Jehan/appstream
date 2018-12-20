@@ -39,9 +39,8 @@
 
 #ifndef _WIN32
 #include <sys/utsname.h>
-#elif ! defined _WIN64
-#include <processthreadsapi.h>
-#include <wow64apiset.h>
+#else
+#include <windows.h>
 #endif
 
 #include "as-resources.h"
@@ -377,9 +376,28 @@ as_utils_find_files (const gchar *dir, gboolean recursive, GError **error)
 gboolean
 as_utils_is_root (void)
 {
+#ifdef _WIN32
+	gboolean is_root = FALSE;
+	HANDLE   token = NULL;
+
+	if (OpenProcessToken (GetCurrentProcess(), TOKEN_QUERY, &token)) {
+		TOKEN_ELEVATION elevation;
+		DWORD length = sizeof (elevation);
+
+		if (GetTokenInformation (token, TokenElevation, &elevation, length, &length)) {
+			is_root = elevation.TokenIsElevated;
+		}
+	}
+	if (token) {
+		CloseHandle (token);
+	}
+
+	return is_root;
+#else
 	uid_t vuid;
 	vuid = getuid ();
 	return (vuid == ((uid_t) 0));
+#endif
 }
 
 /**
