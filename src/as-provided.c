@@ -265,7 +265,12 @@ as_provided_has_item (AsProvided *prov, const gchar *item)
             /* The Microsoft MS-DOS pattern matching is close enough to
              * the glob shell pattern matching.
              */
-			if (PathMatchSpecA (item, pitem) == TRUE)
+			typedef BOOL (WINAPI *t_PathMatchSpecA) (LPCSTR pszFile, LPCSTR pszSpec);
+			t_PathMatchSpecA p_PathMatchSpecA;
+
+			p_PathMatchSpecA =
+				(t_PathMatchSpecA) GetProcAddress (GetModuleHandle ("Shlwapi.dll"), "PathMatchSpecA");
+			if (p_PathMatchSpecA && p_PathMatchSpecA (item, pitem) == TRUE)
 				return TRUE;
 #else
 			if (fnmatch (pitem, item, FNM_NOESCAPE) == 0)
