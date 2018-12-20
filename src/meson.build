@@ -124,7 +124,12 @@ aslib_gperf_yaml = custom_target(
 )
 aslib_src = aslib_src + [aslib_gperf_xml, aslib_gperf_yaml]
 
-aslib_deps = [glib_dep, xml2_dep, yaml_dep, gobject_dep, gio_unix_dep]
+aslib_deps = [glib_dep, xml2_dep, yaml_dep, gobject_dep]
+if platform_win32
+    aslib_deps += [gio_windows_dep]
+else
+    aslib_deps += [gio_unix_dep]
+endif
 if get_option ('stemming')
     aslib_deps += [stemmer_lib]
 endif

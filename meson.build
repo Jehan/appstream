@@ -12,6 +12,16 @@ source_root = meson.source_root()
 as_version = meson.project_version()
 as_api_level = '4'
 
+# Check the right platform.
+
+platform_win32 = false
+
+host_os = host_machine.system()
+
+platform_win32 = (host_os.startswith('mingw') or
+                  host_os.startswith('cygwin') or
+                  host_os.startswith('windows'))
+
 #
 # Configure files
 #
@@ -63,7 +73,11 @@ add_global_arguments('-DAS_COMPILATION', language : 'c')
 glib_dep = dependency('glib-2.0', version : '>=2.46')
 gobject_dep = dependency('gobject-2.0', version : '>=2.46')
 gio_dep = dependency('gio-2.0', version : '>=2.46')
-gio_unix_dep = dependency('gio-unix-2.0', version : '>=2.46')
+if platform_win32
+    gio_windows_dep = dependency('gio-windows-2.0', version : '>=2.46')
+else
+    gio_unix_dep = dependency('gio-unix-2.0', version : '>=2.46')
+endif
 xml2_dep = dependency('libxml-2.0')
 yaml_dep = dependency('yaml-0.1')
 
