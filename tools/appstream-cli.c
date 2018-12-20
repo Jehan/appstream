@@ -24,6 +24,7 @@
 #include <glib/gi18n-lib.h>
 #include <locale.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "ascli-utils.h"
 #include "ascli-actions-mdata.h"
