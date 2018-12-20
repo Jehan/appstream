@@ -34,9 +34,15 @@
 #include <libxml/parser.h>
 #include <time.h>
 #include <utime.h>
-#include <sys/utsname.h>
 #include <sys/stat.h>
 #include <errno.h>
+
+#ifndef _WIN32
+#include <sys/utsname.h>
+#elif ! defined _WIN64
+#include <processthreadsapi.h>
+#include <wow64apiset.h>
+#endif
 
 #include "as-resources.h"
 #include "as-category.h"
@@ -659,6 +665,31 @@ gchar*
 as_get_current_arch (void)
 {
 	gchar *arch;
+#ifdef _WIN32
+
+#ifdef _M_ARM
+	/* Windows on ARM does not have WOW64 compatibility. */
+#ifdef _WIN64
+	arch = g_strdup ("arm64");
+#else
+	arch = g_strdup ("arm");
+#endif
+#else /* x86 */
+#ifdef _WIN64
+	arch = g_strdup ("amd64");
+#else
+	BOOL wow64 = FALSE;
+
+    /* Detect the actual OS architecture. */
+	IsWow64Process (GetCurrentProcess(), &wow64);
+	if (wow64)
+		arch = g_strdup ("amd64");
+	else
+		arch = g_strdup ("ia32");
+#endif
+#endif
+
+#else /* ! _WIN32 */
 	struct utsname uts;
 
 	uname (&uts);
@@ -672,6 +703,7 @@ as_get_current_arch (void)
 	} else {
 		arch = g_strdup (uts.machine);
 	}
+#endif
 
 	return arch;
 }
