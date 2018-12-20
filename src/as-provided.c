@@ -24,7 +24,12 @@
 #include <config.h>
 #include <glib/gi18n-lib.h>
 #include <glib.h>
+
+#ifdef _WIN32
+#include <shlwapi.h>
+#else
 #include <fnmatch.h>
+#endif
 
 #include "as-utils.h"
 #include "as-variant-cache.h"
@@ -256,8 +261,17 @@ as_provided_has_item (AsProvided *prov, const gchar *item)
 
 		/* modalias entries may provide wildcards, we match them by default */
 		if (priv->kind == AS_PROVIDED_KIND_MODALIAS) {
+#ifdef _WIN32
+            /* The Microsoft MS-DOS pattern matching is close enough to
+             * the glob shell pattern matching.
+             */
+			if (PathMatchSpecA (item, pitem) == TRUE)
+				return TRUE;
+#else
 			if (fnmatch (pitem, item, FNM_NOESCAPE) == 0)
 				return TRUE;
+#endif
+
 		}
 	}
 
